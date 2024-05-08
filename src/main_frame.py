@@ -9,6 +9,7 @@ from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QFram
     QStyleFactory, QTextEdit, QWidget, QLineEdit
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
+from mandelbrot_calc import MandelbrotCalculation
 
 matplotlib.use('Qt5Agg')
 
@@ -22,31 +23,28 @@ class FractalCanvas(FigureCanvasQTAgg):
         self.figure = Figure(figsize=(width, height), dpi=dpi)
         super().__init__(self.figure)
 
-    def plot_mandelbrot(self, x_array, y_array):
+    def plot_mandelbrot_col(self):
         self.figure.clear()
         ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
-        ax.plot(x_array, y_array)
+
+        mandel = MandelbrotCalculation()
+        mandel.compute_mandelbrot_col()
+
+        ax.scatter(mandel.x_array, mandel.y_array, 0.2 , mandel.c_array)
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
 
-        # stolen code just for tests
-        ax.scatter([.5], [.5], c='#FFCC00', s=96000, label="face")
-        ax.scatter([.35, .65], [.63, .63], c='k', s=1000, label="eyes")
+        self.draw()
 
-        X = np.linspace(.3, .7, 100)
-        Y = 2 * (X - .5) ** 2 + 0.30
+    def plot_mandelbrot_bw(self):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
 
-        ax.plot(X, Y, c='k', linewidth=8, label="smile")
-
-        ax.set_xlim(0, 1)
-        ax.set_ylim(0, 1)
-
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        ax.spines['bottom'].set_visible(False)
-        ax.set_xticks([])
-        ax.set_yticks([])
+        mandel = MandelbrotCalculation(0.001, 30)
+        mandel.compute_mandelbrot_bw()
+        ax.scatter(mandel.x_array, mandel.y_array, 0.05 , (0,0,0))
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
 
         self.draw()
 
@@ -147,7 +145,7 @@ class MainFrame(QMainWindow):
         arr=np.zeros(10)
 
         self.bifurcation_canvas.plot_logistical(arr,arr)
-        self.mandelbrot_canvas.plot_mandelbrot(arr,arr)
+        self.mandelbrot_canvas.plot_mandelbrot_col()
 
         self.plot_frame.setLayout(plot_frame_layout)
 
