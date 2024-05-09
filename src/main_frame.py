@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QFram
     QStyleFactory, QTextEdit, QWidget, QLineEdit
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-from mandelbrot_calc import MandelbrotCalculation
+from mandelbrot_calc import MandelbrotCalculation, BifurcationCalculation
 
 matplotlib.use('Qt5Agg')
 
@@ -48,31 +48,17 @@ class FractalCanvas(FigureCanvasQTAgg):
 
         self.draw()
 
-    def plot_logistical(self, x_array, y_array):
+    def plot_logistical(self):
         self.figure.clear()
         ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
-        ax.plot(x_array, y_array)
+
+
+        logi = BifurcationCalculation()
+        logi.compute_bifurcation()
+        ax.scatter(logi.r_array, logi.x_array, 0.05 , 'b')
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
 
-        # stolen code just for tests
-        ax.scatter([.5], [.5], c='#0000FF', s=96000, label="face")
-        ax.scatter([.35, .65], [.63, .63], c='k', s=1000, label="eyes")
-
-        X = np.linspace(.3, .7, 100)
-        Y = -2 * (X - .5) ** 2 + 0.45
-
-        ax.plot(X, Y, c='k', linewidth=8, label="smile")
-
-        ax.set_xlim(0, 1)
-        ax.set_ylim(0, 1)
-
-        ax.spines['top'].set_visible(False)
-        ax.spines['right'].set_visible(False)
-        ax.spines['left'].set_visible(False)
-        ax.spines['bottom'].set_visible(False)
-        ax.set_xticks([])
-        ax.set_yticks([])
 
         self.draw()
 
@@ -144,7 +130,7 @@ class MainFrame(QMainWindow):
         #just for shits and giggles
         arr=np.zeros(10)
 
-        self.bifurcation_canvas.plot_logistical(arr,arr)
+        self.bifurcation_canvas.plot_logistical()
         self.mandelbrot_canvas.plot_mandelbrot_col()
 
         self.plot_frame.setLayout(plot_frame_layout)
