@@ -4,8 +4,7 @@
 .venv/
 __pycache__/
 # ignore specific files
-.gitignore
-LICENSE
+/LICENSE
 
 # Thats all.
 #There is no need to write/copy .gitignore with stuff that our project doesnt use.
