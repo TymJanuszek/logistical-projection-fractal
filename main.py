@@ -4,7 +4,7 @@ import matplotlib
 import numpy as np
 from IPython.core.inputtransformer import tr
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QFile, QTextStream, QEvent
+from PyQt5.QtCore import QFile, QTextStream, QEvent, QObject, pyqtSignal, QThread, pyqtSlot
 from PyQt5.QtGui import QFont, QPalette
 from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QFrame, QApplication, \
     QStyleFactory, QTextEdit, QWidget, QLineEdit, QFileDialog, QPushButton
@@ -14,7 +14,7 @@ from mandelbrot_calc import MandelbrotCalculation, BifurcationCalculation
 import console_handler as chand
 from PyQt5.QtCore import Qt
 import mouse_listener as mlis
-
+import threading as thread
 matplotlib.use('Qt5Agg')
 
 
@@ -65,6 +65,22 @@ class FractalCanvas(FigureCanvasQTAgg):
 
         self.draw()
 
+
+
+class FVThread(QObject):
+    finished = pyqtSignal(str)
+    progress = pyqtSignal(str)
+
+    def __init__(self, func, *args):
+        super(FVThread, self).__init__()
+        self.func = func
+        self.args = args
+
+    @pyqtSlot()
+    def run(self):
+        self.progress.emit("Regenerating plot. This may take a while...")
+        self.func(*self.args)
+        self.finished.emit("Plot regeneration completed!")
 
 class MainFrame(QMainWindow):
     def __init__(self):
@@ -149,10 +165,10 @@ class MainFrame(QMainWindow):
 
         #just for shits and giggles
         arr=np.zeros(10)
-
-        self.bifurcation_canvas.plot_logistical()
-        self.mandelbrot_canvas.plot_mandelbrot_col()
-
+        self.t1 = thread.Thread(self.bifurcation_canvas.plot_logistical())
+        self.t2 = thread.Thread(self.mandelbrot_canvas.plot_mandelbrot_col())
+        self.t1.start()
+        self.t2.start()
         self.plot_frame.setLayout(plot_frame_layout)
 
     def init_controls_frame(self):
@@ -214,7 +230,7 @@ class MainFrame(QMainWindow):
         logistical_ctrl_layout.addWidget(step_logi_label)
         logistical_ctrl_layout.addWidget(self.logi_step_tfield)
         self.logi_regen = QPushButton("Regenerate Logistical plot")
-        self.logi_regen.pressed.connect(self.regenerate_bifurcation_plot)
+        self.logi_regen.pressed.connect(self.regenerate_logistical_plot)
         logistical_ctrl_layout.addWidget(self.logi_regen)
 
         mandel_logi_layout.addLayout(mandelbrot_ctrl_layout)
@@ -287,14 +303,22 @@ class MainFrame(QMainWindow):
             precision = int(self.mandel_precision_tfield.text())
         if self.check_text_is_number_float(self.mandel_step_tfield):
             step=float(self.mandel_step_tfield.text())
-        self.mandelbrot_canvas.plot_mandelbrot_col(step, precision)
+        self.t1 = thread.Thread(target=self.mandelbrot_canvas.plot_mandelbrot_col,args=(step, precision))
+        self.t1.start()
+        self.console.append("Regenerating plot. This may take a while...")
+        if self.t1.is_alive():
+            self.console.append("Mandelbrot set plot regeneration completed!")
 
-    def regenerate_bifurcation_plot(self):
+    def regenerate_logistical_plot(self):
         if self.check_text_is_number_int(self.logi_precision_tfield):
             precision = int(self.logi_precision_tfield.text())
         if self.check_text_is_number_float(self.logi_precision_tfield):
             step = float(self.logi_step_tfield.text())
-        self.bifurcation_canvas.plot_logistical(step, precision)
+        self.t1 = thread.Thread(target=self.bifurcation_canvas.plot_logistical, args=(step, precision))
+        self.t1.start()
+        self.console.append("Regenerating plot. This may take a while...")
+        if self.t1.is_alive():
+            self.console.append("Logistical plot regeneration completed!")
 
     def load_external_qt_stylesheet(self):
         dialog = QFileDialog(self)
@@ -310,6 +334,51 @@ class MainFrame(QMainWindow):
             return True
         return super(MainFrame, self).eventFilter(source, event)
 
+    def regenerate_mandel_plot(self):
+        if self.check_text_is_number_int(self.mandel_precision_tfield):
+            precision = int(self.mandel_precision_tfield.text())
+        if self.check_text_is_number_float(self.mandel_step_tfield):
+            step = float(self.mandel_step_tfield.text())
+        if precision / step <= 250000:
+            self.console.append("Starting Mandelbrot plot regeneration...")
+            self.run_thread(self.mandelbrot_canvas.plot_mandelbrot_col, step, precision)
+        else:
+            self.console.append(f"Your pc probably wont handle performing {int(precision/step)} complex calculations. The "
+                                f"limit is 250000")
+            self.console.append("Reduce precision value or increase step value and try again.")
+
+    def regenerate_logistical_plot(self):
+        if self.check_text_is_number_int(self.logi_precision_tfield):
+            precision = int(self.logi_precision_tfield.text())
+        if self.check_text_is_number_float(self.logi_step_tfield):
+            step = float(self.logi_step_tfield.text())
+        if precision/step <=250000:
+            self.console.append("Starting Logistical plot regeneration...")
+            self.run_thread(self.bifurcation_canvas.plot_logistical, step, precision)
+        else:
+            self.console.append(f"Your pc probably wont handle performing {int(precision/step)} complex calculations. The "
+                                f"limit is 250000")
+            self.console.append("Reduce precision value or increase step value and try again.")
+
+    def run_thread(self, func, *args):
+        self.thread = QThread()
+        self.fv_thread = FVThread(func, *args)
+        self.fv_thread.moveToThread(self.thread)
+
+        self.thread.started.connect(self.fv_thread.run)
+        self.fv_thread.finished.connect(self.on_thread_finished)
+        self.fv_thread.progress.connect(self.on_thread_progress)
+        self.fv_thread.finished.connect(self.thread.quit)
+        self.fv_thread.finished.connect(self.fv_thread.deleteLater)
+        self.fv_thread.finished.connect(self.thread.deleteLater)
+
+        self.thread.start()
+
+    def on_thread_finished(self, message):
+        self.console.append(message)
+
+    def on_thread_progress(self, message):
+        self.console.append(message)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
