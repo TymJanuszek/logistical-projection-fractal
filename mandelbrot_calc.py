@@ -31,9 +31,9 @@ class MandelbrotCalculation:
 
     def psych_grad(self, count):
         if count == self.precision:
-            return (0, 0, 0)
-        elif count == self.precision - 1:
             return (1, 1, 1)
+        elif count == self.precision - 1:
+            return (0, 0, 0)
         else:
             return (count / self.precision, 0.5 + count / 2 / self.precision, 0.25 + 0.75 * count / self.precision)
 

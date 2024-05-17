@@ -279,7 +279,7 @@ class MainFrame(QMainWindow):
         text = line_edit.text()
         if text:
             try:
-                float(text)  # Attempt to convert the text to a float
+                float(text)
                 return True
             except ValueError:
                 self.console.setText("ERROR: Incorrect value type (The number should be of floating point type). \n")
@@ -290,7 +290,7 @@ class MainFrame(QMainWindow):
         text = line_edit.text()
         if text:
             try:
-                int(text)  # Attempt to convert the text to a float
+                int(text)
                 return True
             except ValueError:
                 self.console.setText("ERROR: Incorrect value type. (The number should be of integer type). \n")
@@ -379,6 +379,13 @@ class MainFrame(QMainWindow):
 
     def on_thread_progress(self, message):
         self.console.append(message)
+
+    # def save_all(self):
+    #     dialog = QFileDialog(self)
+    #     dialog.setFileMode(QFileDialog.AnyFile)
+    #     plotfilemand = self.mandelbrot_canvas.figure.savefig()
+    #     dialog.saveFileContent()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
