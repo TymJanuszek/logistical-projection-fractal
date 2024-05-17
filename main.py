@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import QFile, QTextStream, QEvent, QObject, pyqtSignal, QThread, pyqtSlot
 from PyQt5.QtGui import QFont, QPalette
 from PyQt5.QtWidgets import QMainWindow, QLabel, QVBoxLayout, QHBoxLayout, QFrame, QApplication, \
-    QStyleFactory, QTextEdit, QWidget, QLineEdit, QFileDialog, QPushButton
+    QStyleFactory, QTextEdit, QWidget, QLineEdit, QFileDialog, QPushButton, QSplitter
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg, NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
 from mandelbrot_calc import MandelbrotCalculation, BifurcationCalculation
@@ -116,7 +116,7 @@ class MainFrame(QMainWindow):
         self.LightMode = self.setStyleType.addAction("&Light Theme")
         self.LightMode.triggered.connect(lambda: self.load_qt_stylesheet( "light_stylesheet.css"))
         self.Classic = self.setStyleType.addAction("&Classic Theme")
-        self.Classic.triggered.connect(lambda: self.load_qt_stylesheet("classic_stylesheet.qss"))
+        self.Classic.triggered.connect(lambda: self.load_qt_stylesheet("classic_stylesheet.css"))
         self.LoadTheme = self.setStyleType.addAction("&Load External Theme file")
         self.LoadTheme.triggered.connect(lambda: self.load_external_qt_stylesheet())
         doc_menu = menu_bar.addMenu("&About")
@@ -251,14 +251,18 @@ class MainFrame(QMainWindow):
     def init_ui(self):
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-
         self.init_menu()
         self.init_plot_frame()
         self.init_controls_frame()
 
-        vbox = QVBoxLayout(central_widget)
-        vbox.addWidget(self.plot_frame)
-        vbox.addWidget(self.controls_frame)
+        splitter = QSplitter(QtCore.Qt.Vertical)
+        splitter.addWidget(self.plot_frame)
+        splitter.addWidget(self.controls_frame)
+        splitter.setSizes([700, 300])
+
+        layout = QVBoxLayout(central_widget)
+        layout.addWidget(splitter)
+        central_widget.setLayout(layout)
 
         QApplication.setStyle(QStyleFactory.create(''))
         self.setGeometry(0, 0, 1200, 800)
