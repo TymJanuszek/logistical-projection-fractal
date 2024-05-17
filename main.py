@@ -1,4 +1,6 @@
+import os
 import sys
+from datetime import datetime
 
 import matplotlib
 import numpy as np
@@ -105,7 +107,8 @@ class MainFrame(QMainWindow):
     def init_menu(self):
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu("&File")
-        self.saveall = file_menu.addAction("&Save All")
+        self.saveall = file_menu.addAction("&Save All", )
+        self.saveall.triggered.connect(self.save_all)
         self.savesession = file_menu.addAction("&Save Session")
         self.settings = file_menu.addAction("&Settings")
         self.quit = file_menu.addAction("&Quit")
@@ -384,11 +387,16 @@ class MainFrame(QMainWindow):
     def on_thread_progress(self, message):
         self.console.append(message)
 
-    # def save_all(self):
-    #     dialog = QFileDialog(self)
-    #     dialog.setFileMode(QFileDialog.AnyFile)
-    #     plotfilemand = self.mandelbrot_canvas.figure.savefig()
-    #     dialog.saveFileContent()
+    def save_all(self):
+        file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
+        if file:
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            mandelbrot_filename = os.path.join(file,f"mandelbrot_{timestamp}.png")
+            logistical_filename = os.path.join(file, f"logistical_{timestamp}.png")
+            self.mandelbrot_canvas.figure.savefig(mandelbrot_filename)
+            self.bifurcation_canvas.figure.savefig(logistical_filename)
+            self.console.append(f"Mandelbrot plot saved to {mandelbrot_filename}")
+            self.console.append(f"Logistical plot saved to {logistical_filename}")
 
 
 if __name__ == "__main__":
