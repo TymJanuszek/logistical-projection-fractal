@@ -106,6 +106,38 @@ class BifurcationCalculation:
 
         plt.xlim(-2, -0.5)
 
+    def compute_bifurcation_x(self, x):
+        self.r_array = np.linspace(self.restart, self.restop, int((self.restop - self.restart) / self.step + 1))
+
+        for r in self.r_array:
+            count = 0
+            switcheroo = Random()
+            s = switcheroo.randint(0, 10)
+
+            while count < self.precision + s:
+                x = r * x * (1 - x)
+                count += 1
+            self.x_array.append(x)
+
+        plt.xlim(-2, -0.5)
+
+    def compute_bifurcation_from_point(self, real, imag):
+        self.r_array = np.linspace(self.restart, self.restop, int((self.restop - self.restart) / self.step + 1))
+        c = complex(real, imag)
+
+        for r in self.r_array:
+            count = 0
+            x = np.float64(0.2)
+            switcheroo = Random()
+            s = switcheroo.randint(0, 10)
+
+            while count < self.precision + s:
+                x = r * x * (1 - x)
+                count += 1
+            self.x_array.append(np.abs(c) * x * (1 - x))
+
+        plt.xlim(-2, -0.5)
+
     def set_precision(self, precision):
         self.precision = precision
 

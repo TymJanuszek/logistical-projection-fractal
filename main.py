@@ -15,7 +15,6 @@ from matplotlib.figure import Figure
 from mandelbrot_calc import MandelbrotCalculation, BifurcationCalculation
 import console_handler as chand
 from PyQt5.QtCore import Qt
-import mouse_listener as mlis
 import threading as thread
 matplotlib.use('Qt5Agg')
 
@@ -37,7 +36,7 @@ class FractalCanvas(FigureCanvasQTAgg):
         self.mandel = MandelbrotCalculation(step, precision)
         self.mandel.compute_mandelbrot_col()
 
-        ax.scatter(self.mandel.x_array, self.mandel.y_array, 0.2 , self.mandel.c_array)
+        ax.scatter(self.mandel.x_array, self.mandel.y_array, 0.2, self.mandel.c_array)
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
 
@@ -55,17 +54,53 @@ class FractalCanvas(FigureCanvasQTAgg):
 
         self.draw()
 
-    def plot_logistical(self,step=0.00001, precision=100):
+    def plot_logistical(self, step=0.00001, precision=100):
         self.figure.clear()
         ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
 
         logi = BifurcationCalculation(step, precision)
         logi.compute_bifurcation()
-        ax.scatter(logi.r_array, logi.x_array, 0.05 , 'b')
+        ax.scatter(logi.r_array, logi.x_array, 0.05, 'b')
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
 
         self.draw()
+
+    def plot_bifurcation_from_point(self, real, imag, step=0.00001, precision=100):
+        self.figure.clear()
+        ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
+
+        logi = BifurcationCalculation(step, precision)
+        logi.compute_bifurcation_from_point(real, imag)
+        ax.scatter(logi.r_array, logi.x_array, 0.05, 'b')
+
+        ax.set_xlim(-2, 0.5)
+        ax.set_ylim(-0.6, 0.4)
+
+        ax.grid(True)
+
+        ax.set_xlabel('r')
+        ax.set_ylabel('x')
+
+        self.draw()
+
+    def clear_plot(self):
+        self.figure.clear()
+        self.draw()
+
+
+class KeyListener(QObject):
+    def __init__(self, mandelbrot_canvas, logistic_canvas):
+        super().__init__()
+        self.mandelbrot_canvas = mandelbrot_canvas
+        self.logistic_canvas = logistic_canvas
+        self.mandelbrot_canvas.mpl_connect('button_press_event', self.on_click)
+
+    def on_click(self, event):
+        if event.inaxes is not None and event.canvas == self.mandelbrot_canvas:
+            x, y = event.xdata, event.ydata
+            print(f"Clicked coordinates: x={x}, y={y}")
+            self.logistic_canvas.plot_bifurcation_from_point(x, y)
 
 
 
@@ -87,6 +122,7 @@ class FVThread(QObject):
 class MainFrame(QMainWindow):
     def __init__(self):
         super(MainFrame, self).__init__()
+        self.key_listener = None
         self.console = QTextEdit()
         self.setWindowIcon(QtGui.QIcon('img/lpf_icon.ico'))
 
@@ -127,17 +163,6 @@ class MainFrame(QMainWindow):
         self.manual = doc_menu.addAction("&User Manual")
         self.contact = doc_menu.addAction("&Help and contact info")
 
-
-    #unnecessery method - you can use external .css stylesheets or .qss stylesheets
-    def init_dark(self):
-        self.setStyleSheet("background-color: #37006a;")
-
-        #for label in self.findChildren(QLabel, options=Qt.FindDirectChildrenOnly):
-         #   label.setStyleSheet("color: black;")
-
-        #self.plot_frame.setStyleSheet(
-        #    """QFrame { background-color: green; color: white }""")
-
     def init_plot_frame(self):
         self.plot_frame.setFrameShape(QFrame.StyledPanel)
 
@@ -165,7 +190,7 @@ class MainFrame(QMainWindow):
 
         plot_frame_layout.addLayout(mandelbrot_sublayout)
         plot_frame_layout.addLayout(bifurcation_sublayout)
-
+        self.key_listener = KeyListener(self.mandelbrot_canvas, self.bifurcation_canvas)
         #just for shits and giggles
         arr=np.zeros(10)
         self.t1 = thread.Thread(self.bifurcation_canvas.plot_logistical())
@@ -196,7 +221,7 @@ class MainFrame(QMainWindow):
         console_label.setFont(font)
 
         mandelbrot_label = QLabel("Plot options for Mandelbrot: ")
-        logistical_label = QLabel("Plot options for Bifurcation: ")
+        logistical_label = QLabel("Plot options for Logistical: ")
 
         precision_mandel_label = QLabel('Precision :')
         self.mandel_precision_tfield = QtWidgets.QLineEdit(self)
@@ -271,11 +296,6 @@ class MainFrame(QMainWindow):
         self.setGeometry(0, 0, 1200, 800)
         self.setWindowTitle('Fractal Visualizer')
 
-        #self.init_dark()
-
-    # def look_for_enter_key(self):
-    #    if self.term_edit.toPlainText().endswith('\n'):
-    #       self.term_handler.get_command(self.term_edit, self.term_edit.toPlainText())
 
     def load_qt_stylesheet(self, stylesheet):
         with open(stylesheet, 'r', encoding='utf-8') as file:
@@ -359,12 +379,12 @@ class MainFrame(QMainWindow):
             precision = int(self.logi_precision_tfield.text())
         if self.check_text_is_number_float(self.logi_step_tfield):
             step = float(self.logi_step_tfield.text())
-        if precision/step <=250000:
+        if precision/step <=10000000:
             self.console.append("Starting Logistical plot regeneration...")
             self.run_thread(self.bifurcation_canvas.plot_logistical, step, precision)
         else:
             self.console.append(f"Your pc probably wont handle performing {int(precision/step)} complex calculations. The "
-                                f"limit is 250000")
+                                f"limit is 10000000")
             self.console.append("Reduce precision value or increase step value and try again.")
 
     def run_thread(self, func, *args):
