@@ -5,10 +5,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 
-
 class MandelbrotCalculation:
+    """
+    A class for performing Mandelbrot set calculations with different coloring schemes.
+
+    Attributes:
+        precision (int): The maximum number of iterations for the Mandelbrot calculation.
+        step (float): The step size for the calculation grid.
+        imstart (float): The starting value for the imaginary part of the complex grid.
+        imstop (float): The stopping value for the imaginary part of the complex grid.
+        restart (float): The starting value for the real part of the complex grid.
+        restop (float): The stopping value for the real part of the complex grid.
+        x_array (list): List to store x-coordinates of the calculated points.
+        y_array (list): List to store y-coordinates of the calculated points.
+        c_array (list): List to store color values of the calculated points.
+    """
 
     def __init__(self, step, precision):
+        """
+        Initialize the MandelbrotCalculation class with the specified step size and precision.
+
+        Args:
+            step (float): The step size for the calculation grid.
+            precision (int): The maximum number of iterations for the Mandelbrot calculation.
+        """
         self.precision = precision
         self.step = step
         self.imstart = -1
@@ -21,15 +41,45 @@ class MandelbrotCalculation:
         self.c_array = []
 
     def blue_grad(self, count):
+        """
+        Generate a blue gradient color based on the iteration count.
+
+        Args:
+            count (int): The iteration count.
+
+        Returns:
+            tuple: A tuple representing the RGB color.
+        """
         return (1 - 1 / self.precision * count), (1 - 1 / self.precision * count), (1 - 1 / self.precision * count / 2)
 
     def set_precision(self, precision):
+        """
+        Set the precision (maximum number of iterations) for the calculation.
+
+        Args:
+            precision (int): The maximum number of iterations.
+        """
         self.precision = precision
 
     def set_step_count(self, step):
+        """
+        Set the step size for the calculation grid.
+
+        Args:
+            step (float): The step size for the calculation grid.
+        """
         self.step = step
 
     def psych_grad(self, count):
+        """
+        Generate a psychedelic gradient color based on the iteration count.
+
+        Args:
+            count (int): The iteration count.
+
+        Returns:
+            tuple: A tuple representing the RGB color.
+        """
         if count == self.precision:
             return (1, 1, 1)
         elif count == self.precision - 1:
@@ -38,6 +88,9 @@ class MandelbrotCalculation:
             return (count / self.precision, 0.5 + count / 2 / self.precision, 0.25 + 0.75 * count / self.precision)
 
     def compute_mandelbrot_col(self):
+        """
+        Compute the Mandelbrot set with coloring based on iteration count and update the arrays.
+        """
         re_array = np.linspace(self.restart - 0.1, self.restop + 0.1, int((self.restop - self.restart) / self.step + 1))
         im_array = np.linspace(self.imstart - 0.1, self.imstop + 0.1, int((self.imstop - self.imstart) / self.step + 1))
 
@@ -60,6 +113,9 @@ class MandelbrotCalculation:
         self.c_array.extend(c_array)
 
     def compute_mandelbrot_bw(self):
+        """
+        Compute the Mandelbrot set in black and white and update the arrays.
+        """
         re_array = np.linspace(self.restart, self.restop, int((self.restop - self.restart) / self.step + 1))
         im_array = np.linspace(self.imstart, self.imstop, int((self.imstop - self.imstart) / self.step + 1))
 
@@ -81,7 +137,26 @@ class MandelbrotCalculation:
 
 
 class BifurcationCalculation:
+    """
+    A class for performing bifurcation calculations for logistic maps.
+
+    Attributes:
+        precision (int): The number of iterations for each calculation.
+        step (float): The step size for the calculation grid.
+        restart (float): The starting value for the parameter r.
+        restop (float): The stopping value for the parameter r.
+        x_array (list): List to store x-coordinates of the calculated points.
+        r_array (list): List to store r values used in the calculation.
+    """
+
     def __init__(self, step, precision):
+        """
+        Initialize the BifurcationCalculation class with the specified step size and precision.
+
+        Args:
+            step (float): The step size for the calculation grid.
+            precision (int): The number of iterations for each calculation.
+        """
         self.precision = precision
         self.step = step
         self.restart = -2.0
@@ -91,6 +166,9 @@ class BifurcationCalculation:
         self.r_array = []
 
     def compute_bifurcation(self):
+        """
+        Compute the bifurcation diagram for the logistic map and update the arrays.
+        """
         self.r_array = np.linspace(self.restart, self.restop, int((self.restop - self.restart) / self.step + 1))
 
         for r in self.r_array:
@@ -107,6 +185,12 @@ class BifurcationCalculation:
         plt.xlim(-2, -0.5)
 
     def compute_bifurcation_x(self, x):
+        """
+        Compute the bifurcation diagram for the logistic map starting from a specific x value and update the arrays.
+
+        Args:
+            x (float): The initial x value for the logistic map.
+        """
         self.r_array = np.linspace(self.restart, self.restop, int((self.restop - self.restart) / self.step + 1))
 
         for r in self.r_array:
@@ -122,6 +206,13 @@ class BifurcationCalculation:
         plt.xlim(-2, -0.5)
 
     def compute_bifurcation_from_point(self, real, imag):
+        """
+        Compute the bifurcation diagram for the logistic map starting from a complex point and update the arrays.
+
+        Args:
+            real (float): The real part of the initial complex value.
+            imag (float): The imaginary part of the initial complex value.
+        """
         self.r_array = np.linspace(self.restart, self.restop, int((self.restop - self.restart) / self.step + 1))
         c = complex(real, imag)
 
@@ -139,14 +230,19 @@ class BifurcationCalculation:
         plt.xlim(-2, -0.5)
 
     def set_precision(self, precision):
+        """
+        Set the precision (number of iterations) for the bifurcation calculation.
+
+        Args:
+            precision (int): The number of iterations for each calculation.
+        """
         self.precision = precision
 
     def set_step_count(self, step):
-        self.step = step
+        """
+        Set the step size for the calculation grid.
 
-# Start plotting using FractalCanvas or another method
-# For example:
-# mandelbrot = MandelbrotCalculation(0.005, 1000)
-# mandelbrot.compute_mandelbrot_col()
-# plt.scatter(mandelbrot.x_array, mandelbrot.y_array, c=mandelbrot.c_array, s=0.1)
-# plt.show()
+        Args:
+            step (float): The step size for the calculation grid.
+        """
+        self.step = step

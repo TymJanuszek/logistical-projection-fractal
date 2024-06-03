@@ -21,15 +21,28 @@ matplotlib.use('Qt5Agg')
 
 class FractalCanvas(FigureCanvasQTAgg):
     """
-    Class created for easy display of fractals
+    A class for creating a canvas to display various fractals.
     """
 
     def __init__(self, width=30, height=20, dpi=100):
+        """
+        Initialize the FractalCanvas with specified dimensions and resolution.
+
+        :param width: Width of the figure in inches, defaults to 30.
+        :param height: Height of the figure in inches, defaults to 20.
+        :param dpi: Dots per inch for the figure, defaults to 100.
+        """
         self.mandel = None
         self.figure = Figure(figsize=(width, height), dpi=dpi)
         super().__init__(self.figure)
 
     def plot_mandelbrot_col(self, step=0.05, precision=20):
+        """
+        Plot the Mandelbrot set in color.
+
+        :param step: Step size for the calculation, defaults to 0.05.
+        :param precision: Precision for the calculation, defaults to 20.
+        """
         self.figure.clear()
         ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
 
@@ -43,6 +56,12 @@ class FractalCanvas(FigureCanvasQTAgg):
         self.draw()
 
     def plot_mandelbrot_bw(self, step=0.00001, precision=100):
+        """
+        Plot the Mandelbrot set in black and white.
+
+        :param step: Step size for the calculation, defaults to 0.00001.
+        :param precision: Precision for the calculation, defaults to 100.
+        """
         self.figure.clear()
         ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
 
@@ -55,6 +74,12 @@ class FractalCanvas(FigureCanvasQTAgg):
         self.draw()
 
     def plot_logistical(self, step=0.00001, precision=100):
+        """
+        Plot the logistic map.
+
+        :param step: Step size for the calculation, defaults to 0.00001.
+        :param precision: Precision for the calculation, defaults to 100.
+        """
         self.figure.clear()
         ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
 
@@ -67,6 +92,14 @@ class FractalCanvas(FigureCanvasQTAgg):
         self.draw()
 
     def plot_bifurcation_from_point(self, real, imag, step=0.00001, precision=100):
+        """
+        Plot the bifurcation diagram starting from a given point in the complex plane.
+
+        :param real: Real part of the complex number.
+        :param imag: Imaginary part of the complex number.
+        :param step: Step size for the calculation, defaults to 0.00001.
+        :param precision: Precision for the calculation, defaults to 100.
+        """
         self.figure.clear()
         ax = self.figure.add_subplot(111, position=[0.05, 0.05, 0.9, 0.9])
 
@@ -85,42 +118,81 @@ class FractalCanvas(FigureCanvasQTAgg):
         self.draw()
 
     def clear_plot(self):
+        """
+        Clear the current plot.
+        """
         self.figure.clear()
         self.draw()
 
 
+
 class KeyListener(QObject):
+    """
+    A class to handle mouse click events on the Mandelbrot canvas and update the logistic canvas accordingly.
+    """
+
     def __init__(self, mandelbrot_canvas, logistic_canvas):
+        """
+        Initialize the KeyListener with the given Mandelbrot and logistic canvases.
+
+        :param mandelbrot_canvas: The canvas displaying the Mandelbrot set.
+        :param logistic_canvas: The canvas displaying the logistic map.
+        """
         super().__init__()
         self.mandelbrot_canvas = mandelbrot_canvas
         self.logistic_canvas = logistic_canvas
         self.mandelbrot_canvas.mpl_connect('button_press_event', self.on_click)
 
     def on_click(self, event):
+        """
+        Handle mouse click events on the Mandelbrot canvas and plot the bifurcation diagram on the logistic canvas.
+
+        :param event: The mouse click event.
+        """
         if event.inaxes is not None and event.canvas == self.mandelbrot_canvas:
             x, y = event.xdata, event.ydata
             print(f"Clicked coordinates: x={x}, y={y}")
             self.logistic_canvas.plot_bifurcation_from_point(x, y)
 
 
-
 class FVThread(QObject):
+    """
+    A class to run a function in a separate thread with progress and finished signals.
+    """
+
     finished = pyqtSignal(str)
     progress = pyqtSignal(str)
 
     def __init__(self, func, *args):
+        """
+        Initialize the FVThread with the given function and arguments.
+
+        :param func: The function to run in the thread.
+        :param args: Arguments to pass to the function.
+        """
         super(FVThread, self).__init__()
         self.func = func
         self.args = args
 
     @pyqtSlot()
     def run(self):
+        """
+        Execute the function in the thread, emitting progress and finished signals.
+        """
         self.progress.emit("Regenerating plot. This may take a while...")
         self.func(*self.args)
         self.finished.emit("Plot regeneration completed!")
 
+
 class MainFrame(QMainWindow):
+    """
+    Main window for the Fractal Visualizer application.
+    """
+
     def __init__(self):
+        """
+        Initialize the MainFrame, setting up the UI components and frames.
+        """
         super(MainFrame, self).__init__()
         self.key_listener = None
         self.console = QTextEdit()
@@ -135,15 +207,17 @@ class MainFrame(QMainWindow):
         self.plot_frame = QFrame()
         self.controls_frame = QFrame()
 
-        self.console_handler = chand.Console_handler(self)
-
+        self.console_handler = chand.ConsoleHandler(self)
 
         self.init_ui()
 
     def init_menu(self):
+        """
+        Initialize the menu bar and add menu items for the application.
+        """
         menu_bar = self.menuBar()
         file_menu = menu_bar.addMenu("&File")
-        self.saveall = file_menu.addAction("&Save All", )
+        self.saveall = file_menu.addAction("&Save All")
         self.saveall.triggered.connect(self.save_all)
         self.savesession = file_menu.addAction("&Save Session")
         self.settings = file_menu.addAction("&Settings")
@@ -153,7 +227,7 @@ class MainFrame(QMainWindow):
         self.DarkMode = self.setStyleType.addAction("&Dark Theme")
         self.DarkMode.triggered.connect(lambda: self.load_qt_stylesheet("dark_stylesheet.css"))
         self.LightMode = self.setStyleType.addAction("&Light Theme")
-        self.LightMode.triggered.connect(lambda: self.load_qt_stylesheet( "light_stylesheet.css"))
+        self.LightMode.triggered.connect(lambda: self.load_qt_stylesheet("light_stylesheet.css"))
         self.Classic = self.setStyleType.addAction("&Classic Theme")
         self.Classic.triggered.connect(lambda: self.load_qt_stylesheet("classic_stylesheet.css"))
         self.LoadTheme = self.setStyleType.addAction("&Load External Theme file")
@@ -164,6 +238,9 @@ class MainFrame(QMainWindow):
         self.contact = doc_menu.addAction("&Help and contact info")
 
     def init_plot_frame(self):
+        """
+        Initialize the plot frame containing the Mandelbrot and logistic canvases.
+        """
         self.plot_frame.setFrameShape(QFrame.StyledPanel)
 
         plot_frame_layout = QHBoxLayout(self.plot_frame)
@@ -192,7 +269,7 @@ class MainFrame(QMainWindow):
         plot_frame_layout.addLayout(bifurcation_sublayout)
         self.key_listener = KeyListener(self.mandelbrot_canvas, self.bifurcation_canvas)
         #just for shits and giggles
-        arr=np.zeros(10)
+        arr = np.zeros(10)
         self.t1 = thread.Thread(self.bifurcation_canvas.plot_logistical())
         self.t2 = thread.Thread(self.mandelbrot_canvas.plot_mandelbrot_col())
         self.t1.start()
@@ -200,6 +277,9 @@ class MainFrame(QMainWindow):
         self.plot_frame.setLayout(plot_frame_layout)
 
     def init_controls_frame(self):
+        """
+        Initialize the controls frame with options for adjusting and regenerating plots.
+        """
         self.controls_frame.setFrameShape(QFrame.StyledPanel)
         controls_layout = QHBoxLayout(self.controls_frame)
 
@@ -277,6 +357,9 @@ class MainFrame(QMainWindow):
         controls_layout.addLayout(console_layout)
 
     def init_ui(self):
+        """
+        Initialize the main UI layout of the application.
+        """
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         self.init_menu()
@@ -296,13 +379,23 @@ class MainFrame(QMainWindow):
         self.setGeometry(0, 0, 1200, 800)
         self.setWindowTitle('Fractal Visualizer')
 
-
     def load_qt_stylesheet(self, stylesheet):
+        """
+        Load and apply a Qt stylesheet to the application.
+
+        :param stylesheet: Path to the stylesheet file.
+        """
         with open(stylesheet, 'r', encoding='utf-8') as file:
             str = file.read()
         self.setStyleSheet(str)
 
     def check_text_is_number_float(self, line_edit):
+        """
+        Check if the text in the given QLineEdit is a valid floating point number.
+
+        :param line_edit: QLineEdit to check.
+        :return: True if the text is a valid float, False otherwise.
+        """
         text = line_edit.text()
         if text:
             try:
@@ -314,6 +407,12 @@ class MainFrame(QMainWindow):
         return False
 
     def check_text_is_number_int(self, line_edit):
+        """
+        Check if the text in the given QLineEdit is a valid integer.
+
+        :param line_edit: QLineEdit to check.
+        :return: True if the text is a valid integer, False otherwise.
+        """
         text = line_edit.text()
         if text:
             try:
@@ -324,44 +423,10 @@ class MainFrame(QMainWindow):
                 return False
         return False
 
-
     def regenerate_mandel_plot(self):
-        if self.check_text_is_number_int(self.mandel_precision_tfield):
-            precision = int(self.mandel_precision_tfield.text())
-        if self.check_text_is_number_float(self.mandel_step_tfield):
-            step=float(self.mandel_step_tfield.text())
-        self.t1 = thread.Thread(target=self.mandelbrot_canvas.plot_mandelbrot_col,args=(step, precision))
-        self.t1.start()
-        self.console.append("Regenerating plot. This may take a while...")
-        if self.t1.is_alive():
-            self.console.append("Mandelbrot set plot regeneration completed!")
-
-    def regenerate_logistical_plot(self):
-        if self.check_text_is_number_int(self.logi_precision_tfield):
-            precision = int(self.logi_precision_tfield.text())
-        if self.check_text_is_number_float(self.logi_precision_tfield):
-            step = float(self.logi_step_tfield.text())
-        self.t1 = thread.Thread(target=self.bifurcation_canvas.plot_logistical, args=(step, precision))
-        self.t1.start()
-        self.console.append("Regenerating plot. This may take a while...")
-        if self.t1.is_alive():
-            self.console.append("Logistical plot regeneration completed!")
-
-    def load_external_qt_stylesheet(self):
-        dialog = QFileDialog(self)
-        dialog.setFileMode(QFileDialog.AnyFile)
-        dialog.setNameFilter(tr("StyleSheets (*.qss *.css)"))
-        stylesheet = dialog.getOpenFileName()
-        self.load_qt_StyleSheet(stylesheet)
-
-    def eventFilter(self, source, event):
-        if event.type() == QEvent.KeyPress and event.key() == QtCore.Qt.Key_Return and source is self.console:
-            text_line = self.console.toPlainText()
-            self.console_handler.get_console_input(text_line)
-            return True
-        return super(MainFrame, self).eventFilter(source, event)
-
-    def regenerate_mandel_plot(self):
+        """
+        Regenerate the Mandelbrot plot based on user-specified precision and step values.
+        """
         if self.check_text_is_number_int(self.mandel_precision_tfield):
             precision = int(self.mandel_precision_tfield.text())
         if self.check_text_is_number_float(self.mandel_step_tfield):
@@ -375,11 +440,14 @@ class MainFrame(QMainWindow):
             self.console.append("Reduce precision value or increase step value and try again.")
 
     def regenerate_logistical_plot(self):
+        """
+        Regenerate the logistic plot based on user-specified precision and step values.
+        """
         if self.check_text_is_number_int(self.logi_precision_tfield):
             precision = int(self.logi_precision_tfield.text())
         if self.check_text_is_number_float(self.logi_step_tfield):
             step = float(self.logi_step_tfield.text())
-        if precision/step <=10000000:
+        if precision / step <= 10000000:
             self.console.append("Starting Logistical plot regeneration...")
             self.run_thread(self.bifurcation_canvas.plot_logistical, step, precision)
         else:
@@ -388,6 +456,12 @@ class MainFrame(QMainWindow):
             self.console.append("Reduce precision value or increase step value and try again.")
 
     def run_thread(self, func, *args):
+        """
+        Run a given function in a separate thread with specified arguments.
+
+        :param func: The function to run in the thread.
+        :param args: Arguments to pass to the function.
+        """
         self.thread = QThread()
         self.fv_thread = FVThread(func, *args)
         self.fv_thread.moveToThread(self.thread)
@@ -402,22 +476,34 @@ class MainFrame(QMainWindow):
         self.thread.start()
 
     def on_thread_finished(self, message):
+        """
+        Handle the finished signal from the thread.
+
+        :param message: The message emitted by the finished signal.
+        """
         self.console.append(message)
 
     def on_thread_progress(self, message):
+        """
+        Handle the progress signal from the thread.
+
+        :param message: The message emitted by the progress signal.
+        """
         self.console.append(message)
 
     def save_all(self):
+        """
+        Save the current plots as image files in a user-selected directory.
+        """
         file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         if file:
             timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-            mandelbrot_filename = os.path.join(file,f"mandelbrot_{timestamp}.png")
+            mandelbrot_filename = os.path.join(file, f"mandelbrot_{timestamp}.png")
             logistical_filename = os.path.join(file, f"logistical_{timestamp}.png")
             self.mandelbrot_canvas.figure.savefig(mandelbrot_filename)
             self.bifurcation_canvas.figure.savefig(logistical_filename)
             self.console.append(f"Mandelbrot plot saved to {mandelbrot_filename}")
             self.console.append(f"Logistical plot saved to {logistical_filename}")
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
