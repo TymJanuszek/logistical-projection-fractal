@@ -236,7 +236,7 @@ class MainFrame(QMainWindow):
         self.LoadTheme.triggered.connect(lambda: self.load_external_qt_stylesheet())
         doc_menu = menu_bar.addMenu("&About")
         self.documentation = doc_menu.addAction("&Documentation")
-        self.documentation.triggered.connect(self.open_docs)
+        self.documentation.triggered.connect(lambda: self.open_docs())
         self.manual = doc_menu.addAction("&User Manual")
         self.contact = doc_menu.addAction("&Help and contact info")
 
