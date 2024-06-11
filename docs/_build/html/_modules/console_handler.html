@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>console_handler &mdash; logistic projection for fractals v.1.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=2e31434f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            logistic projection for fractals
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">logistic projection for fractals</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">console_handler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for console_handler</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+
+<div class="viewcode-block" id="ConsoleHandler">
+<a class="viewcode-back" href="../console_handler.html#console_handler.ConsoleHandler">[docs]</a>
+<span class="k">class</span> <span class="nc">ConsoleHandler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle console input and execute corresponding commands for the MainFrame.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        MainFrame: The main frame object that contains the console to append messages and execute commands.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">MainFrame</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the ConsoleHandler class with the specified MainFrame.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            MainFrame: The main frame object containing the console.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span> <span class="o">=</span> <span class="n">MainFrame</span>
+
+<div class="viewcode-block" id="ConsoleHandler.get_console_input">
+<a class="viewcode-back" href="../console_handler.html#console_handler.ConsoleHandler.get_console_input">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_console_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process the console input text and execute the corresponding command.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text (str): The input text from the console.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_last_non_empty_line</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">command</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">command_list</span><span class="p">(</span><span class="n">command</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHandler.get_last_non_empty_line">
+<a class="viewcode-back" href="../console_handler.html#console_handler.ConsoleHandler.get_last_non_empty_line">[docs]</a>
+    <span class="k">def</span> <span class="nf">get_last_non_empty_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the last non-empty line from the provided lines of text.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            lines (list): A list of strings representing lines of text.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list: A list of words from the last non-empty line.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ConsoleHandler.command_list">
+<a class="viewcode-back" href="../console_handler.html#console_handler.ConsoleHandler.command_list">[docs]</a>
+    <span class="k">def</span> <span class="nf">command_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">commands</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the command based on the parsed command list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            commands (list): A list of command arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">commands</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Exit&quot;</span><span class="p">:</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Save&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;--all&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Saving all</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;--mand&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Saving Mandelbrot plot</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;--log&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Saving logistical plot</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid Save command: </span><span class="si">{</span><span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Save command requires an argument</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Refresh&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;--all&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Refreshing all</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;--mand&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Refreshing Mandelbrot plot</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;--log&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Refreshing logistical plot</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid Refresh command: </span><span class="si">{</span><span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Refresh command requires an argument</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">commands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Clear&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;console&quot;</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid Clear command: </span><span class="si">{</span><span class="n">commands</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Clear command requires an argument</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">MainFrame</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There is no such command as: </span><span class="si">{</span><span class="n">commands</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tymoteusz Januszek &amp; Jan Bialy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

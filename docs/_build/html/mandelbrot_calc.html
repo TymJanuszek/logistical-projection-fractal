@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mandelbrot_calc module &mdash; logistic projection for fractals v.1.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2e31434f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            logistic projection for fractals
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">mandelbrot_calc module</a><ul>
+<li><a class="reference internal" href="#mandelbrot_calc.BifurcationCalculation"><code class="docutils literal notranslate"><span class="pre">BifurcationCalculation</span></code></a><ul>
+<li><a class="reference internal" href="#mandelbrot_calc.BifurcationCalculation.compute_bifurcation"><code class="docutils literal notranslate"><span class="pre">BifurcationCalculation.compute_bifurcation()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.BifurcationCalculation.compute_bifurcation_from_point"><code class="docutils literal notranslate"><span class="pre">BifurcationCalculation.compute_bifurcation_from_point()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.BifurcationCalculation.compute_bifurcation_x"><code class="docutils literal notranslate"><span class="pre">BifurcationCalculation.compute_bifurcation_x()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.BifurcationCalculation.set_precision"><code class="docutils literal notranslate"><span class="pre">BifurcationCalculation.set_precision()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.BifurcationCalculation.set_step_count"><code class="docutils literal notranslate"><span class="pre">BifurcationCalculation.set_step_count()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mandelbrot_calc.MandelbrotCalculation"><code class="docutils literal notranslate"><span class="pre">MandelbrotCalculation</span></code></a><ul>
+<li><a class="reference internal" href="#mandelbrot_calc.MandelbrotCalculation.blue_grad"><code class="docutils literal notranslate"><span class="pre">MandelbrotCalculation.blue_grad()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_bw"><code class="docutils literal notranslate"><span class="pre">MandelbrotCalculation.compute_mandelbrot_bw()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_col"><code class="docutils literal notranslate"><span class="pre">MandelbrotCalculation.compute_mandelbrot_col()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.MandelbrotCalculation.psych_grad"><code class="docutils literal notranslate"><span class="pre">MandelbrotCalculation.psych_grad()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.MandelbrotCalculation.set_precision"><code class="docutils literal notranslate"><span class="pre">MandelbrotCalculation.set_precision()</span></code></a></li>
+<li><a class="reference internal" href="#mandelbrot_calc.MandelbrotCalculation.set_step_count"><code class="docutils literal notranslate"><span class="pre">MandelbrotCalculation.set_step_count()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">logistic projection for fractals</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">mandelbrot_calc module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/mandelbrot_calc.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-mandelbrot_calc">
+<span id="mandelbrot-calc-module"></span><h1>mandelbrot_calc module<a class="headerlink" href="#module-mandelbrot_calc" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="mandelbrot_calc.BifurcationCalculation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mandelbrot_calc.</span></span><span class="sig-name descname"><span class="pre">BifurcationCalculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#BifurcationCalculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.BifurcationCalculation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for performing bifurcation calculations for logistic maps.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>precision (int): The number of iterations for each calculation.
+step (float): The step size for the calculation grid.
+restart (float): The starting value for the parameter r.
+restop (float): The stopping value for the parameter r.
+x_array (list): List to store x-coordinates of the calculated points.
+r_array (list): List to store r values used in the calculation.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.BifurcationCalculation.compute_bifurcation">
+<span class="sig-name descname"><span class="pre">compute_bifurcation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#BifurcationCalculation.compute_bifurcation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.BifurcationCalculation.compute_bifurcation" title="Link to this definition"></a></dt>
+<dd><p>Compute the bifurcation diagram for the logistic map and update the arrays.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.BifurcationCalculation.compute_bifurcation_from_point">
+<span class="sig-name descname"><span class="pre">compute_bifurcation_from_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imag</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#BifurcationCalculation.compute_bifurcation_from_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.BifurcationCalculation.compute_bifurcation_from_point" title="Link to this definition"></a></dt>
+<dd><p>Compute the bifurcation diagram for the logistic map starting from a complex point and update the arrays.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>real (float): The real part of the initial complex value.
+imag (float): The imaginary part of the initial complex value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.BifurcationCalculation.compute_bifurcation_x">
+<span class="sig-name descname"><span class="pre">compute_bifurcation_x</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#BifurcationCalculation.compute_bifurcation_x"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.BifurcationCalculation.compute_bifurcation_x" title="Link to this definition"></a></dt>
+<dd><p>Compute the bifurcation diagram for the logistic map starting from a specific x value and update the arrays.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>x (float): The initial x value for the logistic map.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.BifurcationCalculation.set_precision">
+<span class="sig-name descname"><span class="pre">set_precision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precision</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#BifurcationCalculation.set_precision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.BifurcationCalculation.set_precision" title="Link to this definition"></a></dt>
+<dd><p>Set the precision (number of iterations) for the bifurcation calculation.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>precision (int): The number of iterations for each calculation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.BifurcationCalculation.set_step_count">
+<span class="sig-name descname"><span class="pre">set_step_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#BifurcationCalculation.set_step_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.BifurcationCalculation.set_step_count" title="Link to this definition"></a></dt>
+<dd><p>Set the step size for the calculation grid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>step (float): The step size for the calculation grid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="mandelbrot_calc.MandelbrotCalculation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mandelbrot_calc.</span></span><span class="sig-name descname"><span class="pre">MandelbrotCalculation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#MandelbrotCalculation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.MandelbrotCalculation" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A class for performing Mandelbrot set calculations with different coloring schemes.</p>
+<dl class="simple">
+<dt>Attributes:</dt><dd><p>precision (int): The maximum number of iterations for the Mandelbrot calculation.
+step (float): The step size for the calculation grid.
+imstart (float): The starting value for the imaginary part of the complex grid.
+imstop (float): The stopping value for the imaginary part of the complex grid.
+restart (float): The starting value for the real part of the complex grid.
+restop (float): The stopping value for the real part of the complex grid.
+x_array (list): List to store x-coordinates of the calculated points.
+y_array (list): List to store y-coordinates of the calculated points.
+c_array (list): List to store color values of the calculated points.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.MandelbrotCalculation.blue_grad">
+<span class="sig-name descname"><span class="pre">blue_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#MandelbrotCalculation.blue_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.MandelbrotCalculation.blue_grad" title="Link to this definition"></a></dt>
+<dd><p>Generate a blue gradient color based on the iteration count.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>count (int): The iteration count.</p>
+</dd>
+<dt>Returns:</dt><dd><p>tuple: A tuple representing the RGB color.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_bw">
+<span class="sig-name descname"><span class="pre">compute_mandelbrot_bw</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#MandelbrotCalculation.compute_mandelbrot_bw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_bw" title="Link to this definition"></a></dt>
+<dd><p>Compute the Mandelbrot set in black and white and update the arrays.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_col">
+<span class="sig-name descname"><span class="pre">compute_mandelbrot_col</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#MandelbrotCalculation.compute_mandelbrot_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_col" title="Link to this definition"></a></dt>
+<dd><p>Compute the Mandelbrot set with coloring based on iteration count and update the arrays.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.MandelbrotCalculation.psych_grad">
+<span class="sig-name descname"><span class="pre">psych_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#MandelbrotCalculation.psych_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.MandelbrotCalculation.psych_grad" title="Link to this definition"></a></dt>
+<dd><p>Generate a psychedelic gradient color based on the iteration count.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>count (int): The iteration count.</p>
+</dd>
+<dt>Returns:</dt><dd><p>tuple: A tuple representing the RGB color.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.MandelbrotCalculation.set_precision">
+<span class="sig-name descname"><span class="pre">set_precision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precision</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#MandelbrotCalculation.set_precision"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.MandelbrotCalculation.set_precision" title="Link to this definition"></a></dt>
+<dd><p>Set the precision (maximum number of iterations) for the calculation.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>precision (int): The maximum number of iterations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mandelbrot_calc.MandelbrotCalculation.set_step_count">
+<span class="sig-name descname"><span class="pre">set_step_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/mandelbrot_calc.html#MandelbrotCalculation.set_step_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mandelbrot_calc.MandelbrotCalculation.set_step_count" title="Link to this definition"></a></dt>
+<dd><p>Set the step size for the calculation grid.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>step (float): The step size for the calculation grid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tymoteusz Januszek &amp; Jan Bialy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

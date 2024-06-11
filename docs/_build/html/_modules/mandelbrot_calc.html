@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mandelbrot_calc &mdash; logistic projection for fractals v.1.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=2e31434f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            logistic projection for fractals
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">logistic projection for fractals</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mandelbrot_calc</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mandelbrot_calc</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">Random</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="nn">tf</span>
+
+<div class="viewcode-block" id="MandelbrotCalculation">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.MandelbrotCalculation">[docs]</a>
+<span class="k">class</span> <span class="nc">MandelbrotCalculation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for performing Mandelbrot set calculations with different coloring schemes.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        precision (int): The maximum number of iterations for the Mandelbrot calculation.</span>
+<span class="sd">        step (float): The step size for the calculation grid.</span>
+<span class="sd">        imstart (float): The starting value for the imaginary part of the complex grid.</span>
+<span class="sd">        imstop (float): The stopping value for the imaginary part of the complex grid.</span>
+<span class="sd">        restart (float): The starting value for the real part of the complex grid.</span>
+<span class="sd">        restop (float): The stopping value for the real part of the complex grid.</span>
+<span class="sd">        x_array (list): List to store x-coordinates of the calculated points.</span>
+<span class="sd">        y_array (list): List to store y-coordinates of the calculated points.</span>
+<span class="sd">        c_array (list): List to store color values of the calculated points.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the MandelbrotCalculation class with the specified step size and precision.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step (float): The step size for the calculation grid.</span>
+<span class="sd">            precision (int): The maximum number of iterations for the Mandelbrot calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imstart</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">imstop</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_array</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="MandelbrotCalculation.blue_grad">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.MandelbrotCalculation.blue_grad">[docs]</a>
+    <span class="k">def</span> <span class="nf">blue_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a blue gradient color based on the iteration count.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            count (int): The iteration count.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple representing the RGB color.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">*</span> <span class="n">count</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">*</span> <span class="n">count</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">*</span> <span class="n">count</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MandelbrotCalculation.set_precision">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.MandelbrotCalculation.set_precision">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_precision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the precision (maximum number of iterations) for the calculation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            precision (int): The maximum number of iterations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span></div>
+
+
+<div class="viewcode-block" id="MandelbrotCalculation.set_step_count">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.MandelbrotCalculation.set_step_count">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_step_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the step size for the calculation grid.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step (float): The step size for the calculation grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span></div>
+
+
+<div class="viewcode-block" id="MandelbrotCalculation.psych_grad">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.MandelbrotCalculation.psych_grad">[docs]</a>
+    <span class="k">def</span> <span class="nf">psych_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate a psychedelic gradient color based on the iteration count.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            count (int): The iteration count.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple: A tuple representing the RGB color.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">count</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">+</span> <span class="n">count</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span> <span class="mf">0.25</span> <span class="o">+</span> <span class="mf">0.75</span> <span class="o">*</span> <span class="n">count</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MandelbrotCalculation.compute_mandelbrot_col">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_col">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_mandelbrot_col</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the Mandelbrot set with coloring based on iteration count and update the arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imstart</span> <span class="o">-</span> <span class="mf">0.1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imstop</span> <span class="o">+</span> <span class="mf">0.1</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">imstop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">imstart</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">re_array</span><span class="p">,</span> <span class="n">im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">re_array</span><span class="p">,</span> <span class="n">im_array</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">re_array</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">im_array</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">z</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">m</span><span class="p">)</span>
+
+        <span class="n">x_array</span> <span class="o">=</span> <span class="n">re_array</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">]</span>
+        <span class="n">y_array</span> <span class="o">=</span> <span class="n">im_array</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">]</span>
+        <span class="n">c_array</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">psych_grad</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">numpy</span><span class="p">()[</span><span class="n">m</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">x_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">y_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c_array</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">c_array</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MandelbrotCalculation.compute_mandelbrot_bw">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.MandelbrotCalculation.compute_mandelbrot_bw">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_mandelbrot_bw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the Mandelbrot set in black and white and update the arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">re_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restop</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">imstart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">imstop</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">imstop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">imstart</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">re_array</span><span class="p">,</span> <span class="n">im_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">re_array</span><span class="p">,</span> <span class="n">im_array</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">re_array</span> <span class="o">+</span> <span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">im_array</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">complex64</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">):</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">z</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">c</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">i</span><span class="p">),</span> <span class="n">m</span><span class="p">)</span>
+
+        <span class="n">x_array</span> <span class="o">=</span> <span class="n">re_array</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">]</span>
+        <span class="n">y_array</span> <span class="o">=</span> <span class="n">im_array</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">x_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_array</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">y_array</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="BifurcationCalculation">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.BifurcationCalculation">[docs]</a>
+<span class="k">class</span> <span class="nc">BifurcationCalculation</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for performing bifurcation calculations for logistic maps.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        precision (int): The number of iterations for each calculation.</span>
+<span class="sd">        step (float): The step size for the calculation grid.</span>
+<span class="sd">        restart (float): The starting value for the parameter r.</span>
+<span class="sd">        restop (float): The stopping value for the parameter r.</span>
+<span class="sd">        x_array (list): List to store x-coordinates of the calculated points.</span>
+<span class="sd">        r_array (list): List to store r values used in the calculation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the BifurcationCalculation class with the specified step size and precision.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step (float): The step size for the calculation grid.</span>
+<span class="sd">            precision (int): The number of iterations for each calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restart</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">=</span> <span class="mf">0.5</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_array</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="BifurcationCalculation.compute_bifurcation">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.BifurcationCalculation.compute_bifurcation">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bifurcation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the bifurcation diagram for the logistic map and update the arrays.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restop</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_array</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+            <span class="n">switcheroo</span> <span class="o">=</span> <span class="n">Random</span><span class="p">()</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">switcheroo</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">+</span> <span class="n">s</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BifurcationCalculation.compute_bifurcation_x">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.BifurcationCalculation.compute_bifurcation_x">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bifurcation_x</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the bifurcation diagram for the logistic map starting from a specific x value and update the arrays.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x (float): The initial x value for the logistic map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restop</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_array</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">switcheroo</span> <span class="o">=</span> <span class="n">Random</span><span class="p">()</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">switcheroo</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">+</span> <span class="n">s</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BifurcationCalculation.compute_bifurcation_from_point">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.BifurcationCalculation.compute_bifurcation_from_point">[docs]</a>
+    <span class="k">def</span> <span class="nf">compute_bifurcation_from_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">imag</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the bifurcation diagram for the logistic map starting from a complex point and update the arrays.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            real (float): The real part of the initial complex value.</span>
+<span class="sd">            imag (float): The imaginary part of the initial complex value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">restop</span><span class="p">,</span> <span class="nb">int</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">restop</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">restart</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="nb">complex</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">imag</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_array</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+            <span class="n">switcheroo</span> <span class="o">=</span> <span class="n">Random</span><span class="p">()</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">switcheroo</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+            <span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">+</span> <span class="n">s</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_array</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BifurcationCalculation.set_precision">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.BifurcationCalculation.set_precision">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_precision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">precision</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the precision (number of iterations) for the bifurcation calculation.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            precision (int): The number of iterations for each calculation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span></div>
+
+
+<div class="viewcode-block" id="BifurcationCalculation.set_step_count">
+<a class="viewcode-back" href="../mandelbrot_calc.html#mandelbrot_calc.BifurcationCalculation.set_step_count">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_step_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the step size for the calculation grid.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            step (float): The step size for the calculation grid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="n">step</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tymoteusz Januszek &amp; Jan Bialy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

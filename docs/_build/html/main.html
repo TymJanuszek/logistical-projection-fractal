@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>main module &mdash; logistic projection for fractals v.1.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=2e31434f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            logistic projection for fractals
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">main module</a><ul>
+<li><a class="reference internal" href="#main.FVThread"><code class="docutils literal notranslate"><span class="pre">FVThread</span></code></a><ul>
+<li><a class="reference internal" href="#main.FVThread.finished"><code class="docutils literal notranslate"><span class="pre">FVThread.finished</span></code></a></li>
+<li><a class="reference internal" href="#main.FVThread.progress"><code class="docutils literal notranslate"><span class="pre">FVThread.progress</span></code></a></li>
+<li><a class="reference internal" href="#main.FVThread.run"><code class="docutils literal notranslate"><span class="pre">FVThread.run()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#main.FractalCanvas"><code class="docutils literal notranslate"><span class="pre">FractalCanvas</span></code></a><ul>
+<li><a class="reference internal" href="#main.FractalCanvas.clear_plot"><code class="docutils literal notranslate"><span class="pre">FractalCanvas.clear_plot()</span></code></a></li>
+<li><a class="reference internal" href="#main.FractalCanvas.plot_bifurcation_from_point"><code class="docutils literal notranslate"><span class="pre">FractalCanvas.plot_bifurcation_from_point()</span></code></a></li>
+<li><a class="reference internal" href="#main.FractalCanvas.plot_logistical"><code class="docutils literal notranslate"><span class="pre">FractalCanvas.plot_logistical()</span></code></a></li>
+<li><a class="reference internal" href="#main.FractalCanvas.plot_mandelbrot_bw"><code class="docutils literal notranslate"><span class="pre">FractalCanvas.plot_mandelbrot_bw()</span></code></a></li>
+<li><a class="reference internal" href="#main.FractalCanvas.plot_mandelbrot_col"><code class="docutils literal notranslate"><span class="pre">FractalCanvas.plot_mandelbrot_col()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#main.KeyListener"><code class="docutils literal notranslate"><span class="pre">KeyListener</span></code></a><ul>
+<li><a class="reference internal" href="#main.KeyListener.on_click"><code class="docutils literal notranslate"><span class="pre">KeyListener.on_click()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#main.MainFrame"><code class="docutils literal notranslate"><span class="pre">MainFrame</span></code></a><ul>
+<li><a class="reference internal" href="#main.MainFrame.check_text_is_number_float"><code class="docutils literal notranslate"><span class="pre">MainFrame.check_text_is_number_float()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.check_text_is_number_int"><code class="docutils literal notranslate"><span class="pre">MainFrame.check_text_is_number_int()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.init_controls_frame"><code class="docutils literal notranslate"><span class="pre">MainFrame.init_controls_frame()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.init_menu"><code class="docutils literal notranslate"><span class="pre">MainFrame.init_menu()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.init_plot_frame"><code class="docutils literal notranslate"><span class="pre">MainFrame.init_plot_frame()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.init_ui"><code class="docutils literal notranslate"><span class="pre">MainFrame.init_ui()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.load_qt_stylesheet"><code class="docutils literal notranslate"><span class="pre">MainFrame.load_qt_stylesheet()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.on_thread_finished"><code class="docutils literal notranslate"><span class="pre">MainFrame.on_thread_finished()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.on_thread_progress"><code class="docutils literal notranslate"><span class="pre">MainFrame.on_thread_progress()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.regenerate_logistical_plot"><code class="docutils literal notranslate"><span class="pre">MainFrame.regenerate_logistical_plot()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.regenerate_mandel_plot"><code class="docutils literal notranslate"><span class="pre">MainFrame.regenerate_mandel_plot()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.run_thread"><code class="docutils literal notranslate"><span class="pre">MainFrame.run_thread()</span></code></a></li>
+<li><a class="reference internal" href="#main.MainFrame.save_all"><code class="docutils literal notranslate"><span class="pre">MainFrame.save_all()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">logistic projection for fractals</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">main module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/main.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-main">
+<span id="main-module"></span><h1>main module<a class="headerlink" href="#module-main" title="Link to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="main.FVThread">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">FVThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FVThread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FVThread" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<p>A class to run a function in a separate thread with progress and finished signals.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="main.FVThread.finished">
+<span class="sig-name descname"><span class="pre">finished</span></span><a class="headerlink" href="#main.FVThread.finished" title="Link to this definition"></a></dt>
+<dd><p>pyqtSignal(<a href="#id1"><span class="problematic" id="id2">*</span></a>types, name: str = …, revision: int = …, arguments: Sequence = …) -&gt; PYQT_SIGNAL</p>
+<p>types is normally a sequence of individual types.  Each type is either a
+type object or a string that is the name of a C++ type.  Alternatively
+each type could itself be a sequence of types each describing a different
+overloaded signal.
+name is the optional C++ name of the signal.  If it is not specified then
+the name of the class attribute that is bound to the signal is used.
+revision is the optional revision of the signal that is exported to QML.
+If it is not specified then 0 is used.
+arguments is the optional sequence of the names of the signal’s arguments.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="main.FVThread.progress">
+<span class="sig-name descname"><span class="pre">progress</span></span><a class="headerlink" href="#main.FVThread.progress" title="Link to this definition"></a></dt>
+<dd><p>pyqtSignal(<a href="#id3"><span class="problematic" id="id4">*</span></a>types, name: str = …, revision: int = …, arguments: Sequence = …) -&gt; PYQT_SIGNAL</p>
+<p>types is normally a sequence of individual types.  Each type is either a
+type object or a string that is the name of a C++ type.  Alternatively
+each type could itself be a sequence of types each describing a different
+overloaded signal.
+name is the optional C++ name of the signal.  If it is not specified then
+the name of the class attribute that is bound to the signal is used.
+revision is the optional revision of the signal that is exported to QML.
+If it is not specified then 0 is used.
+arguments is the optional sequence of the names of the signal’s arguments.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.FVThread.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FVThread.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FVThread.run" title="Link to this definition"></a></dt>
+<dd><p>Execute the function in the thread, emitting progress and finished signals.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="main.FractalCanvas">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">FractalCanvas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">height</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpi</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FractalCanvas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FractalCanvas" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">FigureCanvasQTAgg</span></code></p>
+<p>A class for creating a canvas to display various fractals.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.FractalCanvas.clear_plot">
+<span class="sig-name descname"><span class="pre">clear_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FractalCanvas.clear_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FractalCanvas.clear_plot" title="Link to this definition"></a></dt>
+<dd><p>Clear the current plot.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.FractalCanvas.plot_bifurcation_from_point">
+<span class="sig-name descname"><span class="pre">plot_bifurcation_from_point</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">real</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">imag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FractalCanvas.plot_bifurcation_from_point"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FractalCanvas.plot_bifurcation_from_point" title="Link to this definition"></a></dt>
+<dd><p>Plot the bifurcation diagram starting from a given point in the complex plane.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>real</strong> – Real part of the complex number.</p></li>
+<li><p><strong>imag</strong> – Imaginary part of the complex number.</p></li>
+<li><p><strong>step</strong> – Step size for the calculation, defaults to 0.00001.</p></li>
+<li><p><strong>precision</strong> – Precision for the calculation, defaults to 100.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.FractalCanvas.plot_logistical">
+<span class="sig-name descname"><span class="pre">plot_logistical</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FractalCanvas.plot_logistical"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FractalCanvas.plot_logistical" title="Link to this definition"></a></dt>
+<dd><p>Plot the logistic map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> – Step size for the calculation, defaults to 0.00001.</p></li>
+<li><p><strong>precision</strong> – Precision for the calculation, defaults to 100.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.FractalCanvas.plot_mandelbrot_bw">
+<span class="sig-name descname"><span class="pre">plot_mandelbrot_bw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FractalCanvas.plot_mandelbrot_bw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FractalCanvas.plot_mandelbrot_bw" title="Link to this definition"></a></dt>
+<dd><p>Plot the Mandelbrot set in black and white.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> – Step size for the calculation, defaults to 0.00001.</p></li>
+<li><p><strong>precision</strong> – Precision for the calculation, defaults to 100.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.FractalCanvas.plot_mandelbrot_col">
+<span class="sig-name descname"><span class="pre">plot_mandelbrot_col</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#FractalCanvas.plot_mandelbrot_col"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.FractalCanvas.plot_mandelbrot_col" title="Link to this definition"></a></dt>
+<dd><p>Plot the Mandelbrot set in color.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step</strong> – Step size for the calculation, defaults to 0.05.</p></li>
+<li><p><strong>precision</strong> – Precision for the calculation, defaults to 20.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="main.KeyListener">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">KeyListener</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mandelbrot_canvas</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logistic_canvas</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#KeyListener"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.KeyListener" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QObject</span></code></p>
+<p>A class to handle mouse click events on the Mandelbrot canvas and update the logistic canvas accordingly.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.KeyListener.on_click">
+<span class="sig-name descname"><span class="pre">on_click</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#KeyListener.on_click"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.KeyListener.on_click" title="Link to this definition"></a></dt>
+<dd><p>Handle mouse click events on the Mandelbrot canvas and plot the bifurcation diagram on the logistic canvas.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>event</strong> – The mouse click event.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="main.MainFrame">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">MainFrame</span></span><a class="reference internal" href="_modules/main.html#MainFrame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">QMainWindow</span></code></p>
+<p>Main window for the Fractal Visualizer application.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.check_text_is_number_float">
+<span class="sig-name descname"><span class="pre">check_text_is_number_float</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line_edit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.check_text_is_number_float"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.check_text_is_number_float" title="Link to this definition"></a></dt>
+<dd><p>Check if the text in the given QLineEdit is a valid floating point number.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>line_edit</strong> – QLineEdit to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the text is a valid float, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.check_text_is_number_int">
+<span class="sig-name descname"><span class="pre">check_text_is_number_int</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">line_edit</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.check_text_is_number_int"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.check_text_is_number_int" title="Link to this definition"></a></dt>
+<dd><p>Check if the text in the given QLineEdit is a valid integer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>line_edit</strong> – QLineEdit to check.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the text is a valid integer, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.init_controls_frame">
+<span class="sig-name descname"><span class="pre">init_controls_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.init_controls_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.init_controls_frame" title="Link to this definition"></a></dt>
+<dd><p>Initialize the controls frame with options for adjusting and regenerating plots.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.init_menu">
+<span class="sig-name descname"><span class="pre">init_menu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.init_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.init_menu" title="Link to this definition"></a></dt>
+<dd><p>Initialize the menu bar and add menu items for the application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.init_plot_frame">
+<span class="sig-name descname"><span class="pre">init_plot_frame</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.init_plot_frame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.init_plot_frame" title="Link to this definition"></a></dt>
+<dd><p>Initialize the plot frame containing the Mandelbrot and logistic canvases.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.init_ui">
+<span class="sig-name descname"><span class="pre">init_ui</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.init_ui"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.init_ui" title="Link to this definition"></a></dt>
+<dd><p>Initialize the main UI layout of the application.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.load_qt_stylesheet">
+<span class="sig-name descname"><span class="pre">load_qt_stylesheet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stylesheet</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.load_qt_stylesheet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.load_qt_stylesheet" title="Link to this definition"></a></dt>
+<dd><p>Load and apply a Qt stylesheet to the application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stylesheet</strong> – Path to the stylesheet file.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.on_thread_finished">
+<span class="sig-name descname"><span class="pre">on_thread_finished</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.on_thread_finished"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.on_thread_finished" title="Link to this definition"></a></dt>
+<dd><p>Handle the finished signal from the thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – The message emitted by the finished signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.on_thread_progress">
+<span class="sig-name descname"><span class="pre">on_thread_progress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.on_thread_progress"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.on_thread_progress" title="Link to this definition"></a></dt>
+<dd><p>Handle the progress signal from the thread.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> – The message emitted by the progress signal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.regenerate_logistical_plot">
+<span class="sig-name descname"><span class="pre">regenerate_logistical_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.regenerate_logistical_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.regenerate_logistical_plot" title="Link to this definition"></a></dt>
+<dd><p>Regenerate the logistic plot based on user-specified precision and step values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.regenerate_mandel_plot">
+<span class="sig-name descname"><span class="pre">regenerate_mandel_plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.regenerate_mandel_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.regenerate_mandel_plot" title="Link to this definition"></a></dt>
+<dd><p>Regenerate the Mandelbrot plot based on user-specified precision and step values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.run_thread">
+<span class="sig-name descname"><span class="pre">run_thread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">func</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.run_thread"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.run_thread" title="Link to this definition"></a></dt>
+<dd><p>Run a given function in a separate thread with specified arguments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>func</strong> – The function to run in the thread.</p></li>
+<li><p><strong>args</strong> – Arguments to pass to the function.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="main.MainFrame.save_all">
+<span class="sig-name descname"><span class="pre">save_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#MainFrame.save_all"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#main.MainFrame.save_all" title="Link to this definition"></a></dt>
+<dd><p>Save the current plots as image files in a user-selected directory.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tymoteusz Januszek &amp; Jan Bialy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

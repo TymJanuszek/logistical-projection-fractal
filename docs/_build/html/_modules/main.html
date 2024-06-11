@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>main &mdash; logistic projection for fractals v.1.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/fonts.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=2e31434f"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            logistic projection for fractals
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">logistic projection for fractals</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">IPython.core.inputtransformer</span> <span class="kn">import</span> <span class="n">tr</span>
+<span class="kn">from</span> <span class="nn">PyQt5</span> <span class="kn">import</span> <span class="n">QtWidgets</span><span class="p">,</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">QFile</span><span class="p">,</span> <span class="n">QTextStream</span><span class="p">,</span> <span class="n">QEvent</span><span class="p">,</span> <span class="n">QObject</span><span class="p">,</span> <span class="n">pyqtSignal</span><span class="p">,</span> <span class="n">QThread</span><span class="p">,</span> <span class="n">pyqtSlot</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtGui</span> <span class="kn">import</span> <span class="n">QFont</span><span class="p">,</span> <span class="n">QPalette</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtWidgets</span> <span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QFrame</span><span class="p">,</span> <span class="n">QApplication</span><span class="p">,</span> \
+    <span class="n">QStyleFactory</span><span class="p">,</span> <span class="n">QTextEdit</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QFileDialog</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QSplitter</span>
+<span class="kn">from</span> <span class="nn">matplotlib.backends.backend_qt5agg</span> <span class="kn">import</span> <span class="n">FigureCanvasQTAgg</span><span class="p">,</span> <span class="n">NavigationToolbar2QT</span> <span class="k">as</span> <span class="n">NavigationToolbar</span>
+<span class="kn">from</span> <span class="nn">matplotlib.figure</span> <span class="kn">import</span> <span class="n">Figure</span>
+<span class="kn">from</span> <span class="nn">mandelbrot_calc</span> <span class="kn">import</span> <span class="n">MandelbrotCalculation</span><span class="p">,</span> <span class="n">BifurcationCalculation</span>
+<span class="kn">import</span> <span class="nn">console_handler</span> <span class="k">as</span> <span class="nn">chand</span>
+<span class="kn">from</span> <span class="nn">PyQt5.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">import</span> <span class="nn">threading</span> <span class="k">as</span> <span class="nn">thread</span>
+<span class="n">matplotlib</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s1">&#39;Qt5Agg&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FractalCanvas">
+<a class="viewcode-back" href="../main.html#main.FractalCanvas">[docs]</a>
+<span class="k">class</span> <span class="nc">FractalCanvas</span><span class="p">(</span><span class="n">FigureCanvasQTAgg</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for creating a canvas to display various fractals.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the FractalCanvas with specified dimensions and resolution.</span>
+
+<span class="sd">        :param width: Width of the figure in inches, defaults to 30.</span>
+<span class="sd">        :param height: Height of the figure in inches, defaults to 20.</span>
+<span class="sd">        :param dpi: Dots per inch for the figure, defaults to 100.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span> <span class="o">=</span> <span class="n">Figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FractalCanvas.plot_mandelbrot_col">
+<a class="viewcode-back" href="../main.html#main.FractalCanvas.plot_mandelbrot_col">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_mandelbrot_col</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the Mandelbrot set in color.</span>
+
+<span class="sd">        :param step: Step size for the calculation, defaults to 0.05.</span>
+<span class="sd">        :param precision: Precision for the calculation, defaults to 20.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span> <span class="o">=</span> <span class="n">MandelbrotCalculation</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span><span class="o">.</span><span class="n">compute_mandelbrot_col</span><span class="p">()</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel</span><span class="o">.</span><span class="n">x_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span><span class="o">.</span><span class="n">y_array</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span><span class="o">.</span><span class="n">c_array</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FractalCanvas.plot_mandelbrot_bw">
+<a class="viewcode-back" href="../main.html#main.FractalCanvas.plot_mandelbrot_bw">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_mandelbrot_bw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the Mandelbrot set in black and white.</span>
+
+<span class="sd">        :param step: Step size for the calculation, defaults to 0.00001.</span>
+<span class="sd">        :param precision: Precision for the calculation, defaults to 100.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span> <span class="o">=</span> <span class="n">MandelbrotCalculation</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span><span class="o">.</span><span class="n">compute_mandelbrot_bw</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel</span><span class="o">.</span><span class="n">x_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mandel</span><span class="o">.</span><span class="n">y_array</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FractalCanvas.plot_logistical">
+<a class="viewcode-back" href="../main.html#main.FractalCanvas.plot_logistical">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_logistical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the logistic map.</span>
+
+<span class="sd">        :param step: Step size for the calculation, defaults to 0.00001.</span>
+<span class="sd">        :param precision: Precision for the calculation, defaults to 100.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+
+        <span class="n">logi</span> <span class="o">=</span> <span class="n">BifurcationCalculation</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+        <span class="n">logi</span><span class="o">.</span><span class="n">compute_bifurcation</span><span class="p">()</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">logi</span><span class="o">.</span><span class="n">r_array</span><span class="p">,</span> <span class="n">logi</span><span class="o">.</span><span class="n">x_array</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;X&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Y&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FractalCanvas.plot_bifurcation_from_point">
+<a class="viewcode-back" href="../main.html#main.FractalCanvas.plot_bifurcation_from_point">[docs]</a>
+    <span class="k">def</span> <span class="nf">plot_bifurcation_from_point</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">real</span><span class="p">,</span> <span class="n">imag</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Plot the bifurcation diagram starting from a given point in the complex plane.</span>
+
+<span class="sd">        :param real: Real part of the complex number.</span>
+<span class="sd">        :param imag: Imaginary part of the complex number.</span>
+<span class="sd">        :param step: Step size for the calculation, defaults to 0.00001.</span>
+<span class="sd">        :param precision: Precision for the calculation, defaults to 100.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">])</span>
+
+        <span class="n">logi</span> <span class="o">=</span> <span class="n">BifurcationCalculation</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+        <span class="n">logi</span><span class="o">.</span><span class="n">compute_bifurcation_from_point</span><span class="p">(</span><span class="n">real</span><span class="p">,</span> <span class="n">imag</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">logi</span><span class="o">.</span><span class="n">r_array</span><span class="p">,</span> <span class="n">logi</span><span class="o">.</span><span class="n">x_array</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FractalCanvas.clear_plot">
+<a class="viewcode-back" href="../main.html#main.FractalCanvas.clear_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">clear_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clear the current plot.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span></div>
+</div>
+
+
+
+
+<div class="viewcode-block" id="KeyListener">
+<a class="viewcode-back" href="../main.html#main.KeyListener">[docs]</a>
+<span class="k">class</span> <span class="nc">KeyListener</span><span class="p">(</span><span class="n">QObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to handle mouse click events on the Mandelbrot canvas and update the logistic canvas accordingly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mandelbrot_canvas</span><span class="p">,</span> <span class="n">logistic_canvas</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the KeyListener with the given Mandelbrot and logistic canvases.</span>
+
+<span class="sd">        :param mandelbrot_canvas: The canvas displaying the Mandelbrot set.</span>
+<span class="sd">        :param logistic_canvas: The canvas displaying the logistic map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span> <span class="o">=</span> <span class="n">mandelbrot_canvas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logistic_canvas</span> <span class="o">=</span> <span class="n">logistic_canvas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="o">.</span><span class="n">mpl_connect</span><span class="p">(</span><span class="s1">&#39;button_press_event&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_click</span><span class="p">)</span>
+
+<div class="viewcode-block" id="KeyListener.on_click">
+<a class="viewcode-back" href="../main.html#main.KeyListener.on_click">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_click</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle mouse click events on the Mandelbrot canvas and plot the bifurcation diagram on the logistic canvas.</span>
+
+<span class="sd">        :param event: The mouse click event.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">inaxes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">canvas</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">xdata</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">ydata</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Clicked coordinates: x=</span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">, y=</span><span class="si">{</span><span class="n">y</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logistic_canvas</span><span class="o">.</span><span class="n">plot_bifurcation_from_point</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="FVThread">
+<a class="viewcode-back" href="../main.html#main.FVThread">[docs]</a>
+<span class="k">class</span> <span class="nc">FVThread</span><span class="p">(</span><span class="n">QObject</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class to run a function in a separate thread with progress and finished signals.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">finished</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">progress</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the FVThread with the given function and arguments.</span>
+
+<span class="sd">        :param func: The function to run in the thread.</span>
+<span class="sd">        :param args: Arguments to pass to the function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FVThread</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span>
+
+<div class="viewcode-block" id="FVThread.run">
+<a class="viewcode-back" href="../main.html#main.FVThread.run">[docs]</a>
+    <span class="nd">@pyqtSlot</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Execute the function in the thread, emitting progress and finished signals.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;Regenerating plot. This may take a while...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="s2">&quot;Plot regeneration completed!&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="MainFrame">
+<a class="viewcode-back" href="../main.html#main.MainFrame">[docs]</a>
+<span class="k">class</span> <span class="nc">MainFrame</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main window for the Fractal Visualizer application.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the MainFrame, setting up the UI components and frames.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MainFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_listener</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span> <span class="o">=</span> <span class="n">QTextEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QIcon</span><span class="p">(</span><span class="s1">&#39;img/lpf_icon.ico&#39;</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bold10</span> <span class="o">=</span> <span class="n">QFont</span><span class="p">(</span><span class="s2">&quot;Aptos&quot;</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bold10</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span> <span class="o">=</span> <span class="n">FractalCanvas</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bifurcation_canvas</span> <span class="o">=</span> <span class="n">FractalCanvas</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_frame</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controls_frame</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console_handler</span> <span class="o">=</span> <span class="n">chand</span><span class="o">.</span><span class="n">ConsoleHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_ui</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MainFrame.init_menu">
+<a class="viewcode-back" href="../main.html#main.MainFrame.init_menu">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the menu bar and add menu items for the application.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu_bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span>
+        <span class="n">file_menu</span> <span class="o">=</span> <span class="n">menu_bar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;&amp;File&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveall</span> <span class="o">=</span> <span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Save All&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saveall</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">save_all</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">savesession</span> <span class="o">=</span> <span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Save Session&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">settings</span> <span class="o">=</span> <span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Settings&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">quit</span> <span class="o">=</span> <span class="n">file_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Quit&quot;</span><span class="p">)</span>
+        <span class="n">view</span> <span class="o">=</span> <span class="n">menu_bar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;&amp;View&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setStyleType</span> <span class="o">=</span> <span class="n">view</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;&amp;Choose Theme&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DarkMode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setStyleType</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Dark Theme&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">DarkMode</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_qt_stylesheet</span><span class="p">(</span><span class="s2">&quot;CSS/dark_stylesheet.css&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LightMode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setStyleType</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Light Theme&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LightMode</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_qt_stylesheet</span><span class="p">(</span><span class="s2">&quot;CSS/light_stylesheet.css&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Classic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setStyleType</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Classic Theme&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Classic</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_qt_stylesheet</span><span class="p">(</span><span class="s2">&quot;CSS/classic_stylesheet.css&quot;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LoadTheme</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">setStyleType</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Load External Theme file&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">LoadTheme</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_external_qt_stylesheet</span><span class="p">())</span>
+        <span class="n">doc_menu</span> <span class="o">=</span> <span class="n">menu_bar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="s2">&quot;&amp;About&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">documentation</span> <span class="o">=</span> <span class="n">doc_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Documentation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">manual</span> <span class="o">=</span> <span class="n">doc_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;User Manual&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">contact</span> <span class="o">=</span> <span class="n">doc_menu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;&amp;Help and contact info&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.init_plot_frame">
+<a class="viewcode-back" href="../main.html#main.MainFrame.init_plot_frame">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_plot_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the plot frame containing the Mandelbrot and logistic canvases.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_frame</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">StyledPanel</span><span class="p">)</span>
+
+        <span class="n">plot_frame_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_frame</span><span class="p">)</span>
+
+        <span class="n">mandelbrot_sublayout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="n">mandelbrot_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Mandelbrot set:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_frame</span><span class="p">)</span>
+        <span class="n">mandelbrot_label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bold10</span><span class="p">)</span>
+        <span class="n">mandelbrot_sublayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">mandelbrot_label</span><span class="p">)</span>
+
+        <span class="n">mandelbrot_sublayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
+        <span class="n">mandelbrot_toolbar</span> <span class="o">=</span> <span class="n">NavigationToolbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">mandelbrot_sublayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">mandelbrot_toolbar</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">bifurcation_sublayout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="n">bifurcation_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Logistical projection:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">plot_frame</span><span class="p">)</span>
+        <span class="n">bifurcation_label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bold10</span><span class="p">)</span>
+        <span class="n">bifurcation_sublayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">bifurcation_label</span><span class="p">)</span>
+
+        <span class="n">bifurcation_sublayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bifurcation_canvas</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span>
+        <span class="n">bifurcation_toolbar</span> <span class="o">=</span> <span class="n">NavigationToolbar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bifurcation_canvas</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">bifurcation_sublayout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">bifurcation_toolbar</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+
+        <span class="n">plot_frame_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">mandelbrot_sublayout</span><span class="p">)</span>
+        <span class="n">plot_frame_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">bifurcation_sublayout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key_listener</span> <span class="o">=</span> <span class="n">KeyListener</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bifurcation_canvas</span><span class="p">)</span>
+        <span class="c1">#just for shits and giggles</span>
+        <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t1</span> <span class="o">=</span> <span class="n">thread</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bifurcation_canvas</span><span class="o">.</span><span class="n">plot_logistical</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t2</span> <span class="o">=</span> <span class="n">thread</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="o">.</span><span class="n">plot_mandelbrot_col</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t1</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t2</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plot_frame</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">plot_frame_layout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.init_controls_frame">
+<a class="viewcode-back" href="../main.html#main.MainFrame.init_controls_frame">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_controls_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the controls frame with options for adjusting and regenerating plots.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">controls_frame</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">StyledPanel</span><span class="p">)</span>
+        <span class="n">controls_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controls_frame</span><span class="p">)</span>
+
+        <span class="n">control_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">console_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="n">mandelbrot_ctrl_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+        <span class="n">logistical_ctrl_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="n">mandel_logi_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+
+        <span class="n">control_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Controls&quot;</span><span class="p">)</span>
+        <span class="n">console_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Console: &quot;</span><span class="p">)</span>
+
+        <span class="n">font</span> <span class="o">=</span> <span class="n">control_label</span><span class="o">.</span><span class="n">font</span><span class="p">()</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setBold</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="n">font</span><span class="o">.</span><span class="n">pointSize</span><span class="p">()</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">control_label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+        <span class="n">console_label</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+
+        <span class="n">mandelbrot_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Plot options for Mandelbrot: &quot;</span><span class="p">)</span>
+        <span class="n">logistical_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Plot options for Logistical: &quot;</span><span class="p">)</span>
+
+        <span class="n">precision_mandel_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s1">&#39;Precision :&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel_precision_tfield</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel_precision_tfield</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Minimum</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Fixed</span><span class="p">)</span>
+
+        <span class="n">step_mandel_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s1">&#39;Step count: &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel_step_tfield</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel_step_tfield</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Minimum</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Fixed</span><span class="p">)</span>
+
+        <span class="n">precision_logi_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s1">&#39;Precision :&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logi_precision_tfield</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logi_precision_tfield</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Minimum</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Fixed</span><span class="p">)</span>
+
+        <span class="n">step_logi_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s1">&#39;Step count: &#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logi_step_tfield</span> <span class="o">=</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logi_step_tfield</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Minimum</span><span class="p">,</span> <span class="n">QtWidgets</span><span class="o">.</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Fixed</span><span class="p">)</span>
+
+        <span class="n">split_line</span> <span class="o">=</span> <span class="n">QFrame</span><span class="p">()</span>
+        <span class="n">split_line</span><span class="o">.</span><span class="n">setFrameShape</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">VLine</span><span class="p">)</span>
+        <span class="n">split_line</span><span class="o">.</span><span class="n">setFrameShadow</span><span class="p">(</span><span class="n">QFrame</span><span class="o">.</span><span class="n">Sunken</span><span class="p">)</span>
+
+        <span class="n">mandelbrot_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">mandelbrot_label</span><span class="p">)</span>
+        <span class="n">mandelbrot_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">precision_mandel_label</span><span class="p">)</span>
+        <span class="n">mandelbrot_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel_precision_tfield</span><span class="p">)</span>
+        <span class="n">mandelbrot_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">step_mandel_label</span><span class="p">)</span>
+        <span class="n">mandelbrot_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel_step_tfield</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel_regen</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Regenerate Mandelbrot plot&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mandel_regen</span><span class="o">.</span><span class="n">pressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regenerate_mandel_plot</span><span class="p">)</span>
+        <span class="n">mandelbrot_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel_regen</span><span class="p">)</span>
+
+        <span class="n">logistical_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">logistical_label</span><span class="p">)</span>
+        <span class="n">logistical_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">precision_logi_label</span><span class="p">)</span>
+        <span class="n">logistical_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logi_precision_tfield</span><span class="p">)</span>
+        <span class="n">logistical_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">step_logi_label</span><span class="p">)</span>
+        <span class="n">logistical_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logi_step_tfield</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logi_regen</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Regenerate Logistical plot&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logi_regen</span><span class="o">.</span><span class="n">pressed</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regenerate_logistical_plot</span><span class="p">)</span>
+        <span class="n">logistical_ctrl_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logi_regen</span><span class="p">)</span>
+
+        <span class="n">mandel_logi_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">mandelbrot_ctrl_layout</span><span class="p">)</span>
+        <span class="n">mandel_logi_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">split_line</span><span class="p">)</span>
+        <span class="n">mandel_logi_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">logistical_ctrl_layout</span><span class="p">)</span>
+
+        <span class="n">control_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">control_label</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">control_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">mandel_logi_layout</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="s2">&quot;padding: 5px&quot;</span><span class="p">)</span>
+        <span class="n">console_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">console_label</span><span class="p">)</span>
+        <span class="n">console_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">installEventFilter</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="n">controls_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">control_layout</span><span class="p">)</span>
+        <span class="n">controls_layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">console_layout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.init_ui">
+<a class="viewcode-back" href="../main.html#main.MainFrame.init_ui">[docs]</a>
+    <span class="k">def</span> <span class="nf">init_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the main UI layout of the application.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">central_widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">central_widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_menu</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_plot_frame</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_controls_frame</span><span class="p">()</span>
+
+        <span class="n">splitter</span> <span class="o">=</span> <span class="n">QSplitter</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+        <span class="n">splitter</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">plot_frame</span><span class="p">)</span>
+        <span class="n">splitter</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">controls_frame</span><span class="p">)</span>
+        <span class="n">splitter</span><span class="o">.</span><span class="n">setSizes</span><span class="p">([</span><span class="mi">700</span><span class="p">,</span> <span class="mi">300</span><span class="p">])</span>
+
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">(</span><span class="n">central_widget</span><span class="p">)</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">splitter</span><span class="p">)</span>
+        <span class="n">central_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+
+        <span class="n">QApplication</span><span class="o">.</span><span class="n">setStyle</span><span class="p">(</span><span class="n">QStyleFactory</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1200</span><span class="p">,</span> <span class="mi">800</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s1">&#39;Fractal Visualizer&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.load_qt_stylesheet">
+<a class="viewcode-back" href="../main.html#main.MainFrame.load_qt_stylesheet">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_qt_stylesheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stylesheet</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load and apply a Qt stylesheet to the application.</span>
+
+<span class="sd">        :param stylesheet: Path to the stylesheet file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">stylesheet</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="nb">str</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.check_text_is_number_float">
+<a class="viewcode-back" href="../main.html#main.MainFrame.check_text_is_number_float">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_text_is_number_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_edit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the text in the given QLineEdit is a valid floating point number.</span>
+
+<span class="sd">        :param line_edit: QLineEdit to check.</span>
+<span class="sd">        :return: True if the text is a valid float, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;ERROR: Incorrect value type (The number should be of floating point type). </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.check_text_is_number_int">
+<a class="viewcode-back" href="../main.html#main.MainFrame.check_text_is_number_int">[docs]</a>
+    <span class="k">def</span> <span class="nf">check_text_is_number_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_edit</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the text in the given QLineEdit is a valid integer.</span>
+
+<span class="sd">        :param line_edit: QLineEdit to check.</span>
+<span class="sd">        :return: True if the text is a valid integer, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">line_edit</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;ERROR: Incorrect value type. (The number should be of integer type). </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.regenerate_mandel_plot">
+<a class="viewcode-back" href="../main.html#main.MainFrame.regenerate_mandel_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">regenerate_mandel_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Regenerate the Mandelbrot plot based on user-specified precision and step values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_text_is_number_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel_precision_tfield</span><span class="p">):</span>
+            <span class="n">precision</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel_precision_tfield</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_text_is_number_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel_step_tfield</span><span class="p">):</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandel_step_tfield</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">precision</span> <span class="o">/</span> <span class="n">step</span> <span class="o">&lt;=</span> <span class="mi">250000</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Starting Mandelbrot plot regeneration...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="o">.</span><span class="n">plot_mandelbrot_col</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Your pc probably wont handle performing </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">precision</span><span class="o">/</span><span class="n">step</span><span class="p">)</span><span class="si">}</span><span class="s2"> complex calculations. The &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;limit is 250000&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Reduce precision value or increase step value and try again.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.regenerate_logistical_plot">
+<a class="viewcode-back" href="../main.html#main.MainFrame.regenerate_logistical_plot">[docs]</a>
+    <span class="k">def</span> <span class="nf">regenerate_logistical_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Regenerate the logistic plot based on user-specified precision and step values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_text_is_number_int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logi_precision_tfield</span><span class="p">):</span>
+            <span class="n">precision</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logi_precision_tfield</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_text_is_number_float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logi_step_tfield</span><span class="p">):</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logi_step_tfield</span><span class="o">.</span><span class="n">text</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">precision</span> <span class="o">/</span> <span class="n">step</span> <span class="o">&lt;=</span> <span class="mi">10000000</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Starting Logistical plot regeneration...&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_thread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bifurcation_canvas</span><span class="o">.</span><span class="n">plot_logistical</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">precision</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Your pc probably wont handle performing </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">precision</span><span class="o">/</span><span class="n">step</span><span class="p">)</span><span class="si">}</span><span class="s2"> complex calculations. The &quot;</span>
+                                <span class="sa">f</span><span class="s2">&quot;limit is 10000000&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;Reduce precision value or increase step value and try again.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.run_thread">
+<a class="viewcode-back" href="../main.html#main.MainFrame.run_thread">[docs]</a>
+    <span class="k">def</span> <span class="nf">run_thread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run a given function in a separate thread with specified arguments.</span>
+
+<span class="sd">        :param func: The function to run in the thread.</span>
+<span class="sd">        :param args: Arguments to pass to the function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span> <span class="o">=</span> <span class="n">QThread</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span> <span class="o">=</span> <span class="n">FVThread</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">moveToThread</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">started</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_thread_finished</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">progress</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_thread_progress</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">quit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fv_thread</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">deleteLater</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.on_thread_finished">
+<a class="viewcode-back" href="../main.html#main.MainFrame.on_thread_finished">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_thread_finished</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle the finished signal from the thread.</span>
+
+<span class="sd">        :param message: The message emitted by the finished signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.on_thread_progress">
+<a class="viewcode-back" href="../main.html#main.MainFrame.on_thread_progress">[docs]</a>
+    <span class="k">def</span> <span class="nf">on_thread_progress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handle the progress signal from the thread.</span>
+
+<span class="sd">        :param message: The message emitted by the progress signal.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainFrame.save_all">
+<a class="viewcode-back" href="../main.html#main.MainFrame.save_all">[docs]</a>
+    <span class="k">def</span> <span class="nf">save_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save the current plots as image files in a user-selected directory.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">file</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">QFileDialog</span><span class="o">.</span><span class="n">getExistingDirectory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;Select Directory&quot;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">%H%M%S&quot;</span><span class="p">)</span>
+            <span class="n">mandelbrot_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;mandelbrot_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+            <span class="n">logistical_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;logistical_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mandelbrot_canvas</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">mandelbrot_filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bifurcation_canvas</span><span class="o">.</span><span class="n">figure</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">logistical_filename</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mandelbrot plot saved to </span><span class="si">{</span><span class="n">mandelbrot_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">console</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Logistical plot saved to </span><span class="si">{</span><span class="n">logistical_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">main_window</span> <span class="o">=</span> <span class="n">MainFrame</span><span class="p">()</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec_</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Tymoteusz Januszek &amp; Jan Bialy.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
