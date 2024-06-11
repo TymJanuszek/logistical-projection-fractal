@@ -242,8 +242,9 @@ class MainFrame(QMainWindow):
 
     def open_docs(self):
         file_name = 'index.html'
-        file_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'docs', '_build', 'html'))
+        file_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../docs', '_build', 'html'))
         file_path = os.path.join(file_dir, file_name)
+        print(file_path)
         url = 'file://' + file_path
         webbrowser.open(url, new=2)
 
